@@ -329,9 +329,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\shun2\\github\\git_particle\\ParticleFilter\\ParticleFilter\\ParticleFilter.csproj",
-      "projectName": "ParticleFilter",
-      "projectPath": "C:\\Users\\shun2\\github\\git_particle\\ParticleFilter\\ParticleFilter\\ParticleFilter.csproj",
+      "projectUniqueName": "C:\\Users\\shun2\\github\\git_particle\\ParticleFilter\\ParticleFilter\\ParticleFilterTest.csproj",
+      "projectName": "ParticleFilterTest",
+      "projectPath": "C:\\Users\\shun2\\github\\git_particle\\ParticleFilter\\ParticleFilter\\ParticleFilterTest.csproj",
       "packagesPath": "C:\\Users\\shun2\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\shun2\\github\\git_particle\\ParticleFilter\\ParticleFilter\\obj\\",
       "projectStyle": "PackageReference",
