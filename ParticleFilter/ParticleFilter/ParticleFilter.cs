@@ -20,9 +20,8 @@ namespace Classes {
             }
 
             public void RandomWalk(Size size) {
-                //ここが変　後で直す
-                Point.X += Velocity.X;
-                Point.Y += Velocity.Y;
+                Point.X += rand.Next((-1) * Velocity.X, Velocity.X);
+                Point.Y += rand.Next((-1) * Velocity.Y, Velocity.Y);
                 if(Point.X > size.Width -1)
                     Point.X = size.Width -1;
                 if(Point.Y > size.Height -1)
@@ -49,7 +48,7 @@ namespace Classes {
             }
 
             public void SetLikelihood(Color src, Color target) {
-                Likelihood = (Math.Abs(src.R - target.R) + Math.Abs(src.G - target.G) + Math.Abs(src.B - target.B)) / 255.0F;
+                Likelihood = (Math.Abs(src.R - target.R) / 255.0F + Math.Abs(src.G - target.G) / 255.0F + Math.Abs(src.B - target.B) / 255.0F) / 3.0F;
             }
 
             public void Probability(int dispersion) {
@@ -68,7 +67,7 @@ namespace Classes {
         public Color target_RGB;
         FastBitmap src;
         int vMax;
-        private int gaussParam = 1;
+        private int gaussParam = 10;
 
 
         public PF(Bitmap src, Color target,int particleNum,int vMax) {
@@ -79,6 +78,7 @@ namespace Classes {
                 particles[i] = new Particle();
             this.vMax = vMax;
             rand = new Random();
+            SetFirstParticle();
         }
 
         public void SetNewBitmap(Bitmap src) {
@@ -90,8 +90,7 @@ namespace Classes {
         }
 
         public void Next() {
-            SetFirstParticle();
-
+            
             List<int> aliveIndex = new List<int>();
             List<int> deadIndex = new List<int>();
 
@@ -112,7 +111,7 @@ namespace Classes {
             if(aliveIndex.Count > 10) {
                 for(int i = 0;i < deadIndex.Count; i++) {
                     Point target = particles[aliveIndex[rand.Next(aliveIndex.Count - 1)]].Point;
-                    particles[deadIndex[i]].Resampling(target, 10, new Size(src.Width, src.Height));
+                    particles[deadIndex[i]].Resampling(target, 3, new Size(src.Width, src.Height));
                 }
             }
 
@@ -137,28 +136,32 @@ namespace Classes {
             Graphics g = Graphics.FromImage(b);
             foreach(var a in particles) {
                 int num = (int)(a.Likelihood * 5.0F);
-                if(num == 5) {
-                    g.FillEllipse(Brushes.Red, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
-                }
-                else if(num == 4) {
-                    g.FillEllipse(Brushes.Orange, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
-
-                }
-                else if (num == 3) {
-                    g.FillEllipse(Brushes.Yellow, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
-
-                }
-                else if (num == 2) {
-                    g.FillEllipse(Brushes.Green, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
-
-                }
-                else if (num == 1) {
-                    g.FillEllipse(Brushes.Blue, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
-
-                }
-                else {
+                if (num < 0)
                     g.FillEllipse(Brushes.White, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
-                }
+                else
+                    g.FillEllipse(Brushes.Red, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+                //if(num == 5) {
+                //    g.FillEllipse(Brushes.Red, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+                //}
+                //else if(num == 4) {
+                //    g.FillEllipse(Brushes.Orange, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+
+                //}
+                //else if (num == 3) {
+                //    g.FillEllipse(Brushes.Yellow, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+
+                //}
+                //else if (num == 2) {
+                //    g.FillEllipse(Brushes.Green, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+
+                //}
+                //else if (num == 1) {
+                //    g.FillEllipse(Brushes.Blue, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+
+                //}
+                //else {
+                //    g.FillEllipse(Brushes.White, new Rectangle(a.Point.X - radius, a.Point.Y - radius, radius * 2, radius * 2));
+                //}
             }
             g.Dispose();
             return b;

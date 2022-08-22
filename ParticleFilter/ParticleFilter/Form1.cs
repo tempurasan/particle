@@ -26,7 +26,7 @@ namespace ParticleFilter {
             capture.Read(frame);
             pictureBox1.Size = new System.Drawing.Size(frame.Width, frame.Height);
             toolStripStatusLabel1.Text = new System.Drawing.Size(frame.Width, frame.Height).ToString();
-            pf = new PF(BitmapConverter.ToBitmap(frame), Color.FromArgb(54, 121, 166), 100, 30);
+            pf = new PF(BitmapConverter.ToBitmap(frame), Color.FromArgb(82, 121, 180), 100, 30);
             pf.Next();
             timer1.Start();
 
