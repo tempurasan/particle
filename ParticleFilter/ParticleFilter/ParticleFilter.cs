@@ -47,8 +47,17 @@ namespace Classes {
                     Point.Y = 0;
             }
 
-            public void SetLikelihood(Color src, Color target) {
+            public void SetLikelihood_RGB(Color src, Color target) {
                 Likelihood = (Math.Abs(src.R - target.R) / 255.0F + Math.Abs(src.G - target.G) / 255.0F + Math.Abs(src.B - target.B) / 255.0F) / 3.0F;
+            }
+
+            public void SetLikelihood_HSV(Color src, Color target) {
+                float h = Math.Abs(src.GetHue() - target.GetHue());
+                float s = Math.Abs(src.GetSaturation() - target.GetSaturation());
+                float v = Math.Abs(src.GetBrightness() - target.GetBrightness());
+                if (h > 180) h -= 360;
+
+                Likelihood = (h / 180.0F + s + v) / 3;
             }
 
             public void Probability(int dispersion) {
@@ -97,7 +106,8 @@ namespace Classes {
             for(int i = 0; i < particles.Length; i++) {
                 particles[i].RandomWalk(new Size(src.Width, src.Height));
                 Color c = src.GetPixel(particles[i].Point.X, particles[i].Point.Y);
-                particles[i].SetLikelihood(c, target_RGB);
+                particles[i].SetLikelihood_RGB(c, target_RGB);
+                //particles[i].SetLikelihood_HSV(c, target_RGB);
 
                 //確率で消滅する粒子を決定、消滅したものはLikelihoodが-1になる
                 particles[i].Probability(gaussParam);
@@ -111,7 +121,7 @@ namespace Classes {
             if(aliveIndex.Count > 10) {
                 for(int i = 0;i < deadIndex.Count; i++) {
                     Point target = particles[aliveIndex[rand.Next(aliveIndex.Count - 1)]].Point;
-                    particles[deadIndex[i]].Resampling(target, 3, new Size(src.Width, src.Height));
+                    particles[deadIndex[i]].Resampling(target, 50, new Size(src.Width, src.Height));
                 }
             }
 

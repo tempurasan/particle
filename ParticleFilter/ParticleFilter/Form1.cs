@@ -26,7 +26,7 @@ namespace ParticleFilter {
             capture.Read(frame);
             pictureBox1.Size = new System.Drawing.Size(frame.Width, frame.Height);
             toolStripStatusLabel1.Text = new System.Drawing.Size(frame.Width, frame.Height).ToString();
-            pf = new PF(BitmapConverter.ToBitmap(frame), Color.FromArgb(82, 121, 180), 100, 30);
+            pf = new PF(BitmapConverter.ToBitmap(frame), Color.FromArgb(36, 45, 47), 200, 30);
             pf.Next();
             timer1.Start();
 
@@ -34,20 +34,22 @@ namespace ParticleFilter {
 
         private void timer1_Tick(object sender, EventArgs e) {
             capture.Read(frame);
+            frame = frame.Flip(FlipMode.Y);
             pf.SetNewBitmap(BitmapConverter.ToBitmap(frame));
             pf.Next();
             if(timer_count == 10) {
                 Console.WriteLine("a");
             }
             frame = BitmapConverter.ToMat(pf.GetBitmapDrawCircle());
-            pictureBox1.Image = BitmapConverter.ToBitmap(frame.Flip(FlipMode.Y));
+            pictureBox1.Image = BitmapConverter.ToBitmap(frame);
             timer_count++;
             Application.DoEvents();
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
             Color c = BitmapConverter.ToBitmap(frame).GetPixel(e.X, e.Y);
-            toolStripStatusLabel1.Text = c.ToString();
+            string s = string.Format("h:{0},s:{1},b:{2}", c.GetHue(), c.GetSaturation(), c.GetBrightness());
+            toolStripStatusLabel1.Text = c.ToString() + s;
         }
     }
 }
