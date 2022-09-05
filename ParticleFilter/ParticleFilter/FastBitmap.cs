@@ -62,5 +62,9 @@ namespace Classes {
             dst.UnlockBits(dstData);
             return dst;
         }
+
+        public void Dispose() {
+            src.Dispose();
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace Classes {
             public Point Velocity;         //速度
             public float Likelihood = 0;    //尤度
             private Random rand= new Random();
-
+            
             public Particle() {
                 Point = new Point();
                 Velocity = new Point();
@@ -71,13 +71,14 @@ namespace Classes {
 
         }
 
+
         private Particle[] particles;
         private Random rand;
-        public Color target_RGB;
+        private Color target_RGB;
         FastBitmap src;
         int vMax;
         private int gaussParam = 10;
-
+        private Point Center;
 
         public PF(Bitmap src, Color target,int particleNum,int vMax) {
             this.src = new FastBitmap(src);
@@ -88,14 +89,23 @@ namespace Classes {
             this.vMax = vMax;
             rand = new Random();
             SetFirstParticle();
+            Center = new Point();
         }
 
         public void SetNewBitmap(Bitmap src) {
             this.src = new FastBitmap(src);
         }
 
+        public void SetTargetColor(Color c) {
+            target_RGB = c;
+        }
+
         public Bitmap GetBitmapDrawCircle() {
             return DrawCircle(src.ToBitmap(), 10);
+        }
+
+        public Bitmap GetBitmapDrawRect() {
+            return DrawRect(src.ToBitmap(), 30);
         }
 
         public void Next() {
@@ -115,22 +125,22 @@ namespace Classes {
                 else aliveIndex.Add(i);
             }
 
-            Console.WriteLine("alive{0},dead{1}", aliveIndex.Count, deadIndex.Count);
+            //Console.WriteLine("alive{0},dead{1}", aliveIndex.Count, deadIndex.Count);
 
             //リサンプリング
             if(aliveIndex.Count > 10) {
                 for(int i = 0;i < deadIndex.Count; i++) {
                     Point target = particles[aliveIndex[rand.Next(aliveIndex.Count - 1)]].Point;
-                    particles[deadIndex[i]].Resampling(target, 50, new Size(src.Width, src.Height));
+                    particles[deadIndex[i]].Resampling(target, 30, new Size(src.Width, src.Height));
                 }
             }
 
             else {
                 SetFirstParticle();
-                Console.WriteLine("low particles");
+                //Console.WriteLine("low particles");
             }
 
-            DrawCircle(src.ToBitmap(), 5);
+            //DrawCircle(src.ToBitmap(), 5);
 
         }
 
@@ -139,6 +149,27 @@ namespace Classes {
                 particles[i].Point = new Point(rand.Next(0, src.Width -1),rand.Next(0,src.Height));
                 particles[i].Velocity = new Point(rand.Next(0, vMax), rand.Next(0, vMax));
             }
+        }
+
+        private Bitmap DrawRect(Bitmap src, int size) {
+            Bitmap b = (Bitmap)src.Clone();
+            Graphics g = Graphics.FromImage(b);
+            int aveX = 0;
+            int aveY = 0;
+            
+            foreach (var a in particles) {
+                aveX += a.Point.X;
+                aveY += a.Point.Y;
+            }
+
+            aveX /= particles.Length;
+            aveY /= particles.Length;
+
+            Rectangle rect = new Rectangle(aveX - size, aveY - size, size * 2, size * 2);
+
+            g.DrawRectangle(new Pen(Brushes.Red,10), rect);
+
+            return b;
         }
 
         private Bitmap DrawCircle(Bitmap src, int radius) {
